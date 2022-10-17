@@ -1,0 +1,8 @@
+dict.leo.org###adv-halfpage
+!#include uBlock/ads
+s0urce.io##div.login-element:nth-of-type(6)
+s0urce.io###window-msg2
+ww1.tempmail.org#@#.ad-block
+www.edureka.co##.show.fade.modal
+www.edureka.co##.show.fade.modal-backdrop
+www.edureka.co##.slideup.newsletter-section
