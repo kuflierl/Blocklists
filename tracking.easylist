@@ -1,1 +1,9 @@
 !#include uBlock/tracking
+
+||ade.googlesyndication.com^
+||ad.gt^
+||app-measurement.com^
+||geolocation.onetrust.com^
+||google-analytics.com^
+||graph.facebook.com^
+||mobile.pipe.aria.microsoft.com
