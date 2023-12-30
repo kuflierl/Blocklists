@@ -16,10 +16,21 @@ def domain_key_function(s):
     return list(reversed(s["domain"].split(".")))
 
 
+allDomains = []
+
+
+def alldomainseval(domain):
+    if domain not in allDomains:
+        allDomains.append(domain)
+    else:
+        print("Warning: Found Duplicate across sections:", domain)
+
+
 def sortdomains(ddl):
     newlist = sorted(ddl, key=domain_key_function)
     index = 1
-    while True:
+    alldomainseval(newlist[0]["domain"])
+    while index < len(newlist):
         if newlist[index]["domain"] == newlist[index - 1]["domain"]:
             print("Warning: Joining expressions:")
             print(formatline(newlist[index - 1]), end="")
@@ -28,6 +39,7 @@ def sortdomains(ddl):
             newlist[index - 1]["isCommentToggled"] &= newlist[index]["isCommentToggled"]
             newlist.pop(index)
         else:
+            alldomainseval(newlist[index]["domain"])
             index += 1
     return newlist
 
