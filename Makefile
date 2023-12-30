@@ -46,23 +46,24 @@ $(BUILD_DIR)/combineobj/%.host.header: $(BUILD_DIR)/combineobj/%.host.o
 	uniq_domains=`cat $< | wc -l` \
 	envsubst > $@
 
+$(BUILD_DIR)/combineobj/%.host.o: SHELL = /bin/bash
 $(BUILD_DIR)/combineobj/%.host.o: $(COMBINELIST_DIR)/%.host $(BUILD_DIR)/combineobj/%.host.deploader
 	mkdir -p $(dir $@)
 	touch $@
-	regex='^domain(black|white)list (text|web)source [\w-]+(\/[\w-]+)*$$' \
-	while IFS="" read -r p || [ -n "$$p" ] \
+	regex='^domain(black|white)list (text|web)source [\w-]+(\/[\w-]+)*$$'; \
+	while IFS="" read -r p || [ -n "$$p" ]; \
 	do \
-	  echo "$$p" | grep -oPq "$$regex" || continue \
-	  p1=`echo $$p | awk '{print $$1;}')` \
-	  p2=`echo $$p | awk '{print $$2;}')` \
-	  p3=`echo $$p | awk '{print $$3;}')` \
-	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1.o" \
-	  if [ "$$p1" = 'domainblacklist' ] \
-	    then comm --output-delimiter= $@ $$out > $@.tmp \
-		elif [ "$$p1" = 'domainwhitelist' ] \
-		  then comm -23 $@ $$out > $@.tmp \
-		fi \
-		mv $@.tmp $@ \
+	  echo "$$p" | grep -oPq "$$regex" || continue; \
+	  p1=`echo $$p | awk '{print $$1;}'`; \
+	  p2=`echo $$p | awk '{print $$2;}'`; \
+	  p3=`echo $$p | awk '{print $$3;}'`; \
+	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1.o"; \
+	  if [ "$$p1" = 'domainblacklist' ]; \
+	    then comm --output-delimiter= $@ $$out > $@.tmp; \
+		elif [ "$$p1" = 'domainwhitelist' ]; \
+		  then sort -mu $@ $$out > $@.tmp; \
+		fi; \
+		mv $@.tmp $@; \
 	done <<< `sed '1!G;h;$$!d' "$<"`
 	# sed reverses the lines
 

@@ -1,4 +1,6 @@
 /src/textsource/dump
-/build/src
-/build/header
+/build/combineobj
+/build/textsource
+/build/websource
+/build/websource-orig
 old
