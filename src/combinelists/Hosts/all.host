@@ -1,5 +1,5 @@
 # host file that contains all significant catagories of blaclists
-domainwhitelist textsource all
+domainwhitelist textsource common-websites
 domainblacklist textsource advertising
 domainblacklist textsource tracking
 domainblacklist textsource trashware

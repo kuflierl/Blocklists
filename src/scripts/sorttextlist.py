@@ -33,8 +33,8 @@ def sortdomains(ddl):
     while index < len(newlist):
         if newlist[index]["domain"] == newlist[index - 1]["domain"]:
             print("Warning: Joining expressions:")
-            print(formatline(newlist[index - 1]), end="")
-            print(formatline(newlist[index]), end="")
+            print("\t" + formatline(newlist[index - 1]), end="")
+            print("\t" + formatline(newlist[index]), end="")
             newlist[index - 1]["endcomment"] += newlist[index]["endcomment"]
             newlist[index - 1]["isCommentToggled"] &= newlist[index]["isCommentToggled"]
             newlist.pop(index)
