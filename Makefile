@@ -109,7 +109,10 @@ $(BUILD_DIR)/websource/%.domainwhitelist.o: $(BUILD_DIR)/websource-orig/%.domain
 	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | awk 'OFS="\n" {if($$NF > 0) {$$1=$$1;print $$0}}' | sort -u > $@
 
 .PHONY: all
-all: $(DOMAIN_COMBINEFINALS)
+all: build_hostfiles
+
+.PHONY: build_hostfiles
+build_hostfiles: $(DOMAIN_COMBINEFINALS)
 
 .PHONY: clean
 clean:
