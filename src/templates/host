@@ -9,4 +9,6 @@
 # Fetch the latest version of this file: ${update_url}
 # Project home page: ${project_home}
 #
+# False positives and other issues should be reported at ${project_home}/issues
+#
 # ===============================================================
