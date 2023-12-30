@@ -84,11 +84,11 @@ $(BUILD_DIR)/combineobj/%.host.deps: $(COMBINELIST_DIR)/%.host
 $(BUILD_DIR)/textsource/%.domainblacklist.o: $(TEXTSOURCE_DIR)/%/domainblacklist
 	mkdir -p $(dir $@)
 	# filter out everything but the domains especialy comments and spaces
-	grep -o '^[^#!\/ ]*' $< | sort -u > $@
+	grep -sh -o '^[^#!\/ ]*' $^ $<.* | sort -u > $@
 $(BUILD_DIR)/textsource/%.domainwhitelist.o: $(TEXTSOURCE_DIR)/%/domainwhitelist
 	mkdir -p $(dir $@)
 	# filter out everything but the domains especialy comments and spaces
-	grep -o '^[^#!\/ ]*' $< | sort -u > $@
+	grep -sh -o '^[^#!\/ ]*' $^ $<.* | sort -u > $@
 
 # websource get contents
 $(BUILD_DIR)/websource-orig/%: $(WEBSOURCE_DIR)/%
