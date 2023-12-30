@@ -59,9 +59,9 @@ $(BUILD_DIR)/combineobj/%.host.o: $(COMBINELIST_DIR)/%.host $(BUILD_DIR)/combine
 	  p3=`echo $$p | awk '{print $$3;}'`; \
 	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1.o"; \
 	  if [ "$$p1" = 'domainblacklist' ]; \
-	    then comm --output-delimiter= $@ $$out > $@.tmp; \
+	    then sort -mu $@ $$out > $@.tmp; \
 		elif [ "$$p1" = 'domainwhitelist' ]; \
-		  then sort -mu $@ $$out > $@.tmp; \
+		  then comm -23 $@ $$out > $@.tmp; \
 		fi; \
 		mv $@.tmp $@; \
 	done <<< `sed '1!G;h;$$!d' "$<"`
@@ -99,13 +99,14 @@ $(BUILD_DIR)/websource-orig/%: $(WEBSOURCE_DIR)/%
 # websource domainlists extract domains
 # todo use Canned Recipes
 # filter out everything but the domains especialy comments and spaces
-# xargs cleans up the delimiters, strips the string and prints everythin in a new line
+# awk cleans up the delimiters, strips the string and prints everythin in a new line
+# xargs -n1 would work but uses a crazy amount of cpu cycles
 $(BUILD_DIR)/websource/%.domainblacklist.o: $(BUILD_DIR)/websource-orig/%.domainblacklist
 	mkdir -p $(dir $@)
-	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | xargs -n1 | sort -u > $@
+	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | awk 'OFS="\n" {if($$NF > 0) {$$1=$$1;print $$0}}' | sort -u > $@
 $(BUILD_DIR)/websource/%.domainwhitelist.o: $(BUILD_DIR)/websource-orig/%.domainwhitelist
 	mkdir -p $(dir $@)
-	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | xargs -n1 | sort -u > $@
+	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | awk 'OFS="\n" {if($$NF > 0) {$$1=$$1;print $$0}}' | sort -u > $@
 
 .PHONY: all
 all: $(DOMAIN_COMBINEFINALS)
