@@ -11,9 +11,6 @@ TEMPLATE_DIR := $(SRC_DIR)/templates
 TEXTSOURCE_DIR := $(SRC_DIR)/textsource
 WEBSOURCE_DIR := $(SRC_DIR)/websource
 
-# functions
-get_combinelist_deps_host = $(shell )
-
 # dynamic data
 update_date := $(shell date -u +"%D")
 
@@ -80,11 +77,11 @@ $(BUILD_DIR)/combineobj/%.host.deps: $(COMBINELIST_DIR)/%.host
 	done < $<
 
 # textsource domainlists extract domains
-$(BUILD_DIR)/textsource/%.domainblacklist.o: $(TEXTSOURCE_DIR)/%.domainblacklist:
+$(BUILD_DIR)/textsource/%.domainblacklist.o: $(TEXTSOURCE_DIR)/%.domainblacklist
 	mkdir -p $(dir $@)
 	# filter out everything but the domains especialy comments and spaces
 	grep -o '^[^#!\/ ]*' $< | sort -u > $@
-$(BUILD_DIR)/textsource/%.domainwhitelist.o: $(TEXTSOURCE_DIR)/%.domainwhitelist:
+$(BUILD_DIR)/textsource/%.domainwhitelist.o: $(TEXTSOURCE_DIR)/%.domainwhitelist
 	mkdir -p $(dir $@)
 	# filter out everything but the domains especialy comments and spaces
 	grep -o '^[^#!\/ ]*' $< | sort -u > $@
