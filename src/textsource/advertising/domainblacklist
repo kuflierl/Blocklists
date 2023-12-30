@@ -1,28 +1,34 @@
-!# Google-ads
-pagead46.l.doubleclick.net
-dart.l.doubleclick.net
-ad.doubleclick.net
-pagead2.googlesyndication.com
-googleads.g.doubleclick.net
+# Google-ads
+pagead-googlehosted.l.google.com
 www.googleadservices.com
-!# Amazon-ads
+pagead2.googlesyndication.com
+ad.doubleclick.net
+googleads.g.doubleclick.net
+dart.l.doubleclick.net
+pagead46.l.doubleclick.net
+
+# Amazon-ads
+aax-eu-retail-direct.amazon-adsystem.com
 c.amazon-adsystem.com
-!# Linkedin
+
+# Linkedin
 px4.ads.linkedin.com
-!# Bidgear
+
+# Bidgear
 demand.bidgear.com
-pixel-dsp.bidgear.com
 imp-dsp.bidgear.com
 imp9.bidgear.com
-!# Other
-ads.porndoe.com
-ip2geo.pubfuture-ad.com
-cdn.pubfuture-ad.com
-ads.adthrive.com
+pixel-dsp.bidgear.com
+
+# Other
 ad.a-ads.com
+ads.adthrive.com
 brightadnetwork.com
-atonato.de
-k6f0vziiznte.s4.adsco.re
+bidder.h12-media.com
 f.h12-media.com
 tags.h12-media.com
-bidder.h12-media.com
+ads.porndoe.com
+cdn.pubfuture-ad.com
+ip2geo.pubfuture-ad.com
+atonato.de
+k6f0vziiznte.s4.adsco.re
