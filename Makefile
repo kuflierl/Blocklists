@@ -15,12 +15,14 @@ WEBSOURCE_DIR := $(SRC_DIR)/websource
 update_date := $(shell date -u +"%D")
 
 # get combinelist files
-DOMAIN_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name 'host')
-EASYLIST_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name 'easylist')
-UBLOCK_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name 'ublocklist')
+DOMAIN_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name '*.host')
+EASYLIST_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name '*.easylist')
+UBLOCK_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name '*.ublocklist')
+
+DOMAIN_COMBINEFINALS := $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/%,$(DOMAIN_COMBINELISTS))
 
 define deploader_template =
- $(1).deploader: $(shell sh $(SRC_DIR)/scripts/getdeps-host.sh $(1))
+ $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/combineobj/%.deploader,$(1)): $(shell sh $(SRC_DIR)/scripts/getdeps-host.sh $(1))
 endef
 
 $(foreach dcl,$(DOMAIN_COMBINELISTS),$(eval $(call deploader_template,$(dcl))))
@@ -47,17 +49,18 @@ $(BUILD_DIR)/combineobj/%.host.header: $(BUILD_DIR)/combineobj/%.host.o
 $(BUILD_DIR)/combineobj/%.host.o: $(COMBINELIST_DIR)/%.host $(BUILD_DIR)/combineobj/%.host.deploader
 	mkdir -p $(dir $@)
 	touch $@
+	regex='^domain(black|white)list (text|web)source [\w-]+(\/[\w-]+)*$$' \
 	while IFS="" read -r p || [ -n "$$p" ] \
 	do \
-	  [[ "$$p" =~ ^domain(black|white)list (text|web)source \w+(\/\w+)*$$ ]] || continue \
+	  echo "$$p" | grep -oPq "$$regex" || continue \
 	  p1=`echo $$p | awk '{print $$1;}')` \
 	  p2=`echo $$p | awk '{print $$2;}')` \
 	  p3=`echo $$p | awk '{print $$3;}')` \
-	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1" \
-	  if [ "$$p1" = 'domainblacklist' ]; then \
-	    comm --output-delimiter= $@ $$out > $@.tmp \
-		elif [ "$$p1" = 'domainwhitelist' ]; then \
-		  comm -23 $@ $$out > $@.tmp \
+	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1.o" \
+	  if [ "$$p1" = 'domainblacklist' ] \
+	    then comm --output-delimiter= $@ $$out > $@.tmp \
+		elif [ "$$p1" = 'domainwhitelist' ] \
+		  then comm -23 $@ $$out > $@.tmp \
 		fi \
 		mv $@.tmp $@ \
 	done <<< `sed '1!G;h;$$!d' "$<"`
@@ -72,16 +75,16 @@ $(BUILD_DIR)/combineobj/%.host.deps: $(COMBINELIST_DIR)/%.host
 	  p1=`echo $$p | awk '{print $$1;}')` \
 	  p2=`echo $$p | awk '{print $$2;}')` \
 	  p3=`echo $$p | awk '{print $$3;}')` \
-	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1" \
+	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1.o" \
 	  echo "$$out" >> $@ \
 	done < $<
 
 # textsource domainlists extract domains
-$(BUILD_DIR)/textsource/%.domainblacklist.o: $(TEXTSOURCE_DIR)/%.domainblacklist
+$(BUILD_DIR)/textsource/%.domainblacklist.o: $(TEXTSOURCE_DIR)/%/domainblacklist
 	mkdir -p $(dir $@)
 	# filter out everything but the domains especialy comments and spaces
 	grep -o '^[^#!\/ ]*' $< | sort -u > $@
-$(BUILD_DIR)/textsource/%.domainwhitelist.o: $(TEXTSOURCE_DIR)/%.domainwhitelist
+$(BUILD_DIR)/textsource/%.domainwhitelist.o: $(TEXTSOURCE_DIR)/%/domainwhitelist
 	mkdir -p $(dir $@)
 	# filter out everything but the domains especialy comments and spaces
 	grep -o '^[^#!\/ ]*' $< | sort -u > $@
@@ -103,6 +106,16 @@ $(BUILD_DIR)/websource/%.domainwhitelist.o: $(BUILD_DIR)/websource-orig/%.domain
 	mkdir -p $(dir $@)
 	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | xargs -n1 | sort -u > $@
 
+.PHONY: all
+all: $(DOMAIN_COMBINEFINALS)
+
 .PHONY: clean
 clean:
 	rm -r $(BUILD_DIR)
+
+.PHONY: dumpvar
+dumpvar:
+	@echo "DOMAIN_COMBINELISTS: $(DOMAIN_COMBINELISTS)"
+	@echo "DOMAIN_COMBINEFINALS: $(DOMAIN_COMBINEFINALS)"
+	@echo "$(call deploader_template,./src/combinelists/Hosts/all.host)"
+	@echo '$(foreach dcl,$(DOMAIN_COMBINELISTS),$(call deploader_template,$(dcl)))'

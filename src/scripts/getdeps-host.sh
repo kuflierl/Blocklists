@@ -1,9 +1,10 @@
+regex='^domain(black|white)list (text|web)source [\w-]+(\/[\w-]+)*$'
 while IFS="" read -r p || [ -n "$p" ]
 do
-  [[ "$p" =~ ^domain(black|white)list (text|web)source \w+(\/\w+)*$ ]] || continue
-  firstparam=`echo $p | awk '{print $1;}')`
-  secondparam=`echo $p | awk '{print $2;}')`
-  thirdparam=`echo $p | awk '{print $3;}')`
-  out="./build/$secondparam/$thirdparam.$firstparam"
+  echo "$p" | grep -oPq "$regex" || continue
+  p1=`echo $p | awk '{print $1;}'`
+  p2=`echo $p | awk '{print $2;}'`
+  p3=`echo $p | awk '{print $3;}'`
+  out="./build/$p2/$p3.$p1.o"
   echo "$out"
 done < $1
