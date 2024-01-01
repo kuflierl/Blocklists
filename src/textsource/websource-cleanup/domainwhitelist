@@ -1,3 +1,4 @@
+# A list of commonly added default entries into host files, need to be filtered out before use
 0.0.0.0
 broadcasthost
 ip6-allhosts
