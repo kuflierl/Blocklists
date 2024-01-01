@@ -25,6 +25,9 @@ define deploader_template =
  $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/combineobj/%.deploader,$(1)): $(shell sh $(SRC_DIR)/scripts/getdeps-host.sh $(1))
 endef
 
+.PHONY: all
+all: build_hostfiles
+
 $(foreach dcl,$(DOMAIN_COMBINELISTS),$(eval $(call deploader_template,$(dcl))))
 
 $(BUILD_DIR)/%.host: $(BUILD_DIR)/combineobj/%.host.header $(BUILD_DIR)/combineobj/%.host.o
@@ -107,9 +110,6 @@ $(BUILD_DIR)/websource/%.domainblacklist.o: $(BUILD_DIR)/websource-orig/%.domain
 $(BUILD_DIR)/websource/%.domainwhitelist.o: $(BUILD_DIR)/websource-orig/%.domainwhitelist
 	mkdir -p $(dir $@)
 	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | awk 'OFS="\n" {if($$NF > 0) {$$1=$$1;print $$0}}' | sort -u > $@
-
-.PHONY: all
-all: build_hostfiles
 
 .PHONY: build_hostfiles
 build_hostfiles: $(DOMAIN_COMBINEFINALS)
