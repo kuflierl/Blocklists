@@ -32,7 +32,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: Hosts
-          path: resources/Hosts
+          path: pages/resources/Hosts
       - name: Make Resource List
         working-directory: ./pages
         run: make
