@@ -1,10 +1,5 @@
 # Domains that are known to track you
 # ###########################################################
-# sensic.net
-de-config-preproduction.sensic.net
-de1-s2s.sensic.net
-localhost.sensic.net
-
 # sentry
 app.getsentry.com
 
