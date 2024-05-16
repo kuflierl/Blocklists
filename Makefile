@@ -1,6 +1,6 @@
 # deployment config
 project_online_home := https://github.com/kuflierl/Blocklists
-project_rawonline_root := https://raw.githubusercontent.com/kuflierl/Blocklists/main
+project_rawonline_root := https://kuflierl.github.io/Blocklists/resources
 
 # folder locations
 BUILD_DIR := ./build
@@ -44,7 +44,7 @@ $(BUILD_DIR)/combineobj/%.host.header: $(BUILD_DIR)/combineobj/%.host.o
 	cat $(TEMPLATE_DIR)/host | \
 	title="$(@F:%.header=%)" \
 	update_date="$(update_date)" \
-	update_url="$(project_rawonline_root)/$(BUILD_DIR:./%=%)/$(*).host" \
+	update_url="$(project_rawonline_root)/$(*).host" \
 	project_home="$(project_online_home)" \
 	uniq_domains=`cat $< | wc -l` \
 	envsubst > $@
