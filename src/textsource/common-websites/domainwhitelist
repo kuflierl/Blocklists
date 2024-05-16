@@ -14,6 +14,8 @@ apnews.com
 apple.com
 bbc.com
 bestbuy.com
+bettermarks.com
+school.bettermarks.com
 bing.com
 breitbart.com
 canva.com
@@ -23,6 +25,7 @@ chaturbate.com
 cnbc.com
 cnn.com
 cvs.com
+desmos.com
 discord.com
 duck.com
 duckduckgo.com
@@ -58,6 +61,7 @@ netflix.com
 nextdoor.com
 nypost.com
 nytimes.com
+www.nytimes.com
 office.com
 okta.com
 onlyfans.com
@@ -73,6 +77,9 @@ reddit.com
 roblox.com
 sharepoint.com
 spotify.com
+stackexchange.com
+unix.stackexchange.com
+stackoverflow.com
 steamcommunity.com
 ! taboola.com # advertising?
 target.com
@@ -87,6 +94,7 @@ usps.com
 walmart.com
 washingtonpost.com
 weather.com
+webuntis.com
 whatsapp.com
 web.whatsapp.com
 x.com
@@ -97,9 +105,19 @@ xvideos.com
 yahoo.com
 yelp.com
 zillow.com
+bund.de
+tagesschau.de
+www.tagesschau.de
+irs.gov
+nasa.gov
+www.nasa.gov
 nih.gov
+usa.gov
+www.usa.gov
+github.io
 craigslist.org
 eff.org
+fdroid.org
 mozilla.org
 www.mozilla.org
 npr.org
@@ -108,14 +126,3 @@ wikipedia.org
 twitch.tv
 dailymail.co.uk
 zoom.us
-stackoverflow.com
-fdroid.org
-www.nytimes.com
-nytimes.com
-unix.stackexchange.com
-stackexchange.com
-webuntis.com
-bettermarks.com
-school.bettermarks.com
-github.io
-bund.de
