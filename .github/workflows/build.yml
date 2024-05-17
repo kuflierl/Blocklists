@@ -40,8 +40,9 @@ jobs:
         working-directory: ./pages
         run: make build
       - name: Upload artifact
-        working-directory: ./pages
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./pages/_site/
 
   # Deployment job
   deploy:
