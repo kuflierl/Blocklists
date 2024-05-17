@@ -22,11 +22,11 @@ UBLOCK_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name '*.ublocklist')
 DOMAIN_COMBINEFINALS := $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/%,$(DOMAIN_COMBINELISTS))
 
 define deploader_template =
- $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/combineobj/%.deploader,$(1)): $(shell sh $(SRC_DIR)/scripts/getdeps-host.sh $(1))
+ $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/combineobj/%.deploader,$(1)): $(shell sh tools/getdeps-host.sh $(1))
 endef
 
 .PHONY: all
-all: build_hostfiles
+all: build_hostfiles build_site
 
 $(foreach dcl,$(DOMAIN_COMBINELISTS),$(eval $(call deploader_template,$(dcl))))
 
@@ -111,12 +111,29 @@ $(BUILD_DIR)/websource/%.domainwhitelist.o: $(BUILD_DIR)/websource-orig/%.domain
 	mkdir -p $(dir $@)
 	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | awk 'OFS="\n" {if($$NF > 0) {$$1=$$1;print $$0}}' | sort -u > $@
 
+.PHONY: generate_site
+generate_site: build_hostfiles
+	mkdir -p pages/resources
+	cp -r $(BUILD_DIR)/Hosts pages/resources/
+	make -C pages generate
+
+.PHONY: build_site
+build_site: generate_site
+	make -C pages build
+
 .PHONY: build_hostfiles
 build_hostfiles: $(DOMAIN_COMBINEFINALS)
 
+.PHONY: clean_build
+clean_build:
+	rm -rf $(BUILD_DIR)
+
+.PHONY: clean_pages
+clean_pages:
+	make -C pages clean
+
 .PHONY: clean
-clean:
-	rm -r $(BUILD_DIR)
+clean: clean_build clean_pages
 
 .PHONY: dumpvar
 dumpvar:
