@@ -30,6 +30,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           working-directory: ./pages
+          bundler-cache: true # take care of dependencies as soon as possible
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Download Resources
