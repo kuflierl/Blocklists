@@ -1,4 +1,5 @@
 # deployment config
+project_owner := kuflierl
 project_online_home := https://github.com/kuflierl/Blocklists
 project_rawonline_root := https://kuflierl.github.io/Blocklists/resources
 
@@ -42,7 +43,7 @@ $(BUILD_DIR)/%.host: $(BUILD_DIR)/combineobj/%.host.header $(BUILD_DIR)/combineo
 $(BUILD_DIR)/combineobj/%.host.header: $(BUILD_DIR)/combineobj/%.host.o
 	mkdir -p $(dir $@)
 	cat $(TEMPLATE_DIR)/host | \
-	title="$(@F:%.header=%)" \
+	title="$(project_owner)'s $(@F:%.header=%)" \
 	update_date="$(update_date)" \
 	update_url="$(project_rawonline_root)/$(*).host" \
 	project_home="$(project_online_home)" \
