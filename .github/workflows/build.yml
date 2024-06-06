@@ -26,6 +26,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: pages
+      - name: Setup Ruby for Bundle
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ./pages
+          bundler-cache: true # take care of dependencies as soon as possible
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Download Resources
@@ -36,13 +41,13 @@ jobs:
       - name: Make Resource List
         working-directory: ./pages
         run: make generate
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./pages
-          destination: ./_site
+      - name: build site
+        working-directory: ./pages
+        run: make build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./pages/_site/
 
   # Deployment job
   deploy:
