@@ -10,7 +10,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: build
-        run: make
+        run: make build_hostfiles
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -35,7 +35,7 @@ jobs:
           path: pages/resources/Hosts
       - name: Make Resource List
         working-directory: ./pages
-        run: make
+        run: make generate
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
