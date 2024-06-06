@@ -1,4 +1,5 @@
 # deployment config
+project_owner := kuflierl
 project_online_home := https://github.com/kuflierl/Blocklists
 project_rawonline_root := https://kuflierl.github.io/Blocklists/resources
 
@@ -22,11 +23,11 @@ UBLOCK_COMBINELISTS := $(shell find $(COMBINELIST_DIR) -name '*.ublocklist')
 DOMAIN_COMBINEFINALS := $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/%,$(DOMAIN_COMBINELISTS))
 
 define deploader_template =
- $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/combineobj/%.deploader,$(1)): $(shell sh $(SRC_DIR)/scripts/getdeps-host.sh $(1))
+ $(patsubst $(COMBINELIST_DIR)/%,$(BUILD_DIR)/combineobj/%.deploader,$(1)): $(shell sh tools/getdeps-host.sh $(1))
 endef
 
 .PHONY: all
-all: build_hostfiles
+all: build_hostfiles build_site
 
 $(foreach dcl,$(DOMAIN_COMBINELISTS),$(eval $(call deploader_template,$(dcl))))
 
@@ -42,18 +43,18 @@ $(BUILD_DIR)/%.host: $(BUILD_DIR)/combineobj/%.host.header $(BUILD_DIR)/combineo
 $(BUILD_DIR)/combineobj/%.host.header: $(BUILD_DIR)/combineobj/%.host.o
 	mkdir -p $(dir $@)
 	cat $(TEMPLATE_DIR)/host | \
-	title="$(@F:%.header=%)" \
+	title="$(project_owner)'s $(@F:%.header=%)" \
 	update_date="$(update_date)" \
 	update_url="$(project_rawonline_root)/$(*).host" \
 	project_home="$(project_online_home)" \
 	uniq_domains=`cat $< | wc -l` \
 	envsubst > $@
 
-$(BUILD_DIR)/combineobj/%.host.o: SHELL = /bin/bash
 $(BUILD_DIR)/combineobj/%.host.o: $(COMBINELIST_DIR)/%.host $(BUILD_DIR)/combineobj/%.host.deploader
 	mkdir -p $(dir $@)
 	touch $@
 	regex='^domain(black|white)list (text|web)source [\w-]+(\/[\w-]+)*$$'; \
+        sed '1!G;h;$$!d' "$<" | \
 	while IFS="" read -r p || [ -n "$$p" ]; \
 	do \
 	  echo "$$p" | grep -oPq "$$regex" || continue; \
@@ -63,11 +64,11 @@ $(BUILD_DIR)/combineobj/%.host.o: $(COMBINELIST_DIR)/%.host $(BUILD_DIR)/combine
 	  out="$(BUILD_DIR)/$$p2/$$p3.$$p1.o"; \
 	  if [ "$$p1" = 'domainblacklist' ]; \
 	    then sort -mu $@ $$out > $@.tmp; \
-		elif [ "$$p1" = 'domainwhitelist' ]; \
-		  then comm -23 $@ $$out > $@.tmp; \
-		fi; \
-		mv $@.tmp $@; \
-	done <<< `sed '1!G;h;$$!d' "$<"`
+	  elif [ "$$p1" = 'domainwhitelist' ]; \
+	    then comm -23 $@ $$out > $@.tmp; \
+	  fi; \
+	  mv $@.tmp $@; \
+	done
 	# sed reverses the lines
 
 #todo autogen deploader using eval!!
@@ -111,12 +112,29 @@ $(BUILD_DIR)/websource/%.domainwhitelist.o: $(BUILD_DIR)/websource-orig/%.domain
 	mkdir -p $(dir $@)
 	grep -oP '^[ \t]*\d{1,3}(\.\d{1,3}){3}\K([ \t]+[^#!\/ \t\n]*)+' $< | awk 'OFS="\n" {if($$NF > 0) {$$1=$$1;print $$0}}' | sort -u > $@
 
+.PHONY: generate_site
+generate_site: build_hostfiles
+	mkdir -p pages/resources
+	cp -r $(BUILD_DIR)/Hosts pages/resources/
+	make -C pages generate
+
+.PHONY: build_site
+build_site: generate_site
+	make -C pages build
+
 .PHONY: build_hostfiles
 build_hostfiles: $(DOMAIN_COMBINEFINALS)
 
+.PHONY: clean_build
+clean_build:
+	rm -rf $(BUILD_DIR)
+
+.PHONY: clean_pages
+clean_pages:
+	make -C pages clean
+
 .PHONY: clean
-clean:
-	rm -r $(BUILD_DIR)
+clean: clean_build clean_pages
 
 .PHONY: dumpvar
 dumpvar:
